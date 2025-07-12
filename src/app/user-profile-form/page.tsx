@@ -40,38 +40,38 @@ const ProfileForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const form = new FormData();
-    form.append("name", formData.name);
-    form.append("location", formData.location);
-    form.append(
-      "skillsOffered",
-      JSON.stringify(formData.skillsOffered.split(",").map((s) => s.trim()))
-    );
-    form.append(
-      "skillsWanted",
-      JSON.stringify(formData.skillsWanted.split(",").map((s) => s.trim()))
-    );
-    form.append("availableDays", JSON.stringify(availableDays));
-    form.append("availableTimes", JSON.stringify(availableTimes));
-    form.append("isPublic", String(formData.isPublic));
-    form.append("bio", formData.bio);
 
-    if (profilePhoto) {
-      if (profilePhoto.size / (1024 * 1024) > 1) {
+    try {
+      if (profilePhoto && profilePhoto.size / (1024 * 1024) > 1) {
         alert("Profile photo size must be ≤ 1 MB.");
         return;
       }
-      form.append("profilePhoto", profilePhoto);
-    }
 
-    try {
-      const res = await fetch("http://localhost:5000/api/profile", {
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("location", formData.location);
+      form.append(
+        "skillsOffered",
+        JSON.stringify(formData.skillsOffered.split(",").map((s) => s.trim()))
+      );
+      form.append(
+        "skillsWanted",
+        JSON.stringify(formData.skillsWanted.split(",").map((s) => s.trim()))
+      );
+      form.append("availableDays", JSON.stringify(availableDays));
+      form.append("availableTimes", JSON.stringify(availableTimes));
+      form.append("isPublic", String(formData.isPublic));
+      form.append("bio", formData.bio);
+      if (profilePhoto) form.append("profilePhoto", profilePhoto);
+
+      const res = await fetch("/api/profile", {
         method: "POST",
         body: form,
       });
-      const data = await res.json();
-      alert(data.message || "Profile submitted successfully!");
-      console.log("Saved:", data);
+
+      if (!res.ok) throw new Error("Failed to submit");
+
+      alert("Profile submitted successfully!");
     } catch (err) {
       console.error(err);
       alert("Submission failed. See console.");
@@ -91,7 +91,7 @@ const ProfileForm = () => {
           value={formData.name}
           onChange={handleChange}
           placeholder="Enter your name"
-          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg focus:bg-white/40 focus:outline-none focus:shadow-lg block w-full p-2.5 placeholder:text-gray-200 mb-4"
+          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg block w-full p-2.5 mb-4"
         />
 
         <label htmlFor="location" className="block mb-2 text-sm font-medium text-white">Location</label>
@@ -101,7 +101,7 @@ const ProfileForm = () => {
           value={formData.location}
           onChange={handleChange}
           placeholder="Enter your city"
-          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg focus:bg-white/40 focus:outline-none focus:shadow-lg block w-full p-2.5 placeholder:text-gray-200 mb-4"
+          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg block w-full p-2.5 mb-4"
         />
 
         <label htmlFor="profilePhoto" className="block mb-2 text-sm font-medium text-white">Profile Photo</label>
@@ -120,7 +120,7 @@ const ProfileForm = () => {
           value={formData.skillsOffered}
           onChange={handleChange}
           placeholder="e.g. Photoshop, Cooking"
-          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg focus:bg-white/40 focus:outline-none focus:shadow-lg block w-full p-2.5 placeholder:text-gray-200 mb-4"
+          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg block w-full p-2.5 mb-4"
         />
 
         <label htmlFor="skillsWanted" className="block mb-2 text-sm font-medium text-white">Skills Wanted *</label>
@@ -131,7 +131,7 @@ const ProfileForm = () => {
           value={formData.skillsWanted}
           onChange={handleChange}
           placeholder="e.g. Guitar, Excel"
-          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg focus:bg-white/40 focus:outline-none focus:shadow-lg block w-full p-2.5 placeholder:text-gray-200 mb-4"
+          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg block w-full p-2.5 mb-4"
         />
 
         <label className="block mb-2 text-sm font-medium text-white">Availability *</label>
@@ -170,20 +170,17 @@ const ProfileForm = () => {
           value={formData.bio}
           onChange={handleChange}
           placeholder="Write something about yourself..."
-          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg focus:bg-white/40 focus:outline-none focus:shadow-lg block w-full p-2.5 placeholder:text-gray-200 mb-4 resize-none"
+          className="bg-white/20 border border-white/30 text-white text-sm rounded-lg block w-full p-2.5 mb-4 resize-none"
         ></textarea>
 
         <div className='flex justify-center mb-4'>
-          <button type="submit" className="text-white font-medium rounded-lg text-sm w-80 px-5 py-2 text-center focus:ring-4 focus:outline-none bg-gradient-to-r from-[#0353a4] to-[#003555] hover:from-[#003555] hover:to-[#0353a4] shadow-md hover:shadow-lg">
+          <button type="submit" className="text-white font-medium rounded-lg text-sm w-80 px-5 py-2 bg-gradient-to-r from-[#0353a4] to-[#003555] hover:from-[#003555] hover:to-[#0353a4] shadow-md">
             Submit Profile
           </button>
         </div>
 
         <div className='flex justify-center'>
-          <button type="button" className="text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-2 py-2 text-center inline-flex items-center mb-2 mt-2 w-80 justify-center">
-            <svg className="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19">
-              <path fillRule="evenodd" d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z" clipRule="evenodd"/>
-            </svg>
+          <button type="button" className="text-white bg-[#4285F4] hover:bg-[#4285F4]/90 font-medium rounded-lg text-sm px-2 py-2 inline-flex items-center mb-2 mt-2 w-80 justify-center">
             Sign in with Google
           </button>
         </div>
