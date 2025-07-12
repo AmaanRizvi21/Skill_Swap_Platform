@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "skill-swap-app",
+=======
+  "name": "my-new-app",
+>>>>>>> 6163b50 (Initial commit by Nitin)
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -19,6 +23,15 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@tailwindcss/postcss": "^4",
+<<<<<<< HEAD
     "tailwindcss": "^4"
   }
 }
+=======
+    "tailwindcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.5",
+    "@eslint/eslintrc": "^3"
+  }
+}
+>>>>>>> 6163b50 (Initial commit by Nitin)
